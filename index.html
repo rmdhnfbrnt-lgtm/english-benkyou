@@ -128,6 +128,61 @@ h2 { font-size: 15px; margin: 0; color: var(--muted); font-weight: 500; letter-s
 select { font: inherit; padding: 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); width: 100%; }
 .danger { border: 1px solid var(--shu); color: var(--shu); background: none; border-radius: 10px; padding: 8px 14px; font-weight: 700; }
 .note { font-size: 13px; color: var(--muted); background: var(--shu-soft); border-radius: 10px; padding: 10px 12px; margin: 0; }
+/* ---- Beginner-friendly layer: bigger targets, clearer labels, text-size setting ---- */
+.app { zoom: var(--zoom, 1); }
+:root[data-size="m"] { --zoom: 1; }
+:root[data-size="l"] { --zoom: 1.15; }
+:root[data-size="xl"] { --zoom: 1.3; }
+body { font-size: 17px; }
+.hint { font-size: 15px; }
+.brand { flex-direction: column; align-items: flex-start; gap: 0; line-height: 1.2; }
+.brand span { font-size: 13px; }
+.iconbtn { white-space: nowrap; min-height: 44px; padding: 8px 16px; font-size: 15px; display: inline-flex; align-items: center; gap: 6px; font-weight: 700; color: var(--ai); }
+.stat .l { font-size: 13px; }
+.btn, .opt, .speak, .danger, .seg button { min-height: 48px; }
+.btn { font-size: 16px; }
+.btn:active, .opt:active, .speak:active, .iconbtn:active, .back:active { transform: translateY(1px); filter: brightness(0.96); }
+.hero { display: flex; flex-direction: column; gap: 12px; }
+.start { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 18px 16px; font-size: 21px; border-radius: 14px; box-shadow: 0 3px 0 color-mix(in srgb, var(--ai) 60%, black); }
+.start small { font-size: 14px; font-weight: 500; opacity: 0.9; }
+.linkbtn { border: 0; background: none; color: var(--ai); font-weight: 700; font-size: 15px; padding: 10px 4px; min-height: 44px; text-decoration: underline; text-underline-offset: 3px; }
+.legend { display: flex; flex-direction: column; gap: 4px; font-size: 14px; color: var(--muted); margin: 0; }
+.legend b { color: var(--ink); }
+.unit .acts .btn { padding: 10px 14px; }
+.count { font-size: 13px; }
+.unit { grid-template-columns: 1fr; }
+.unit .acts { grid-row: auto; gap: 8px; }
+.unit .acts .btn { flex: 1; }
+h1 { word-break: auto-phrase; }
+
+.viewhead { flex-wrap: wrap; }
+.viewhead .back { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 8px 16px; min-height: 44px; font-weight: 700; font-size: 15px; }
+.viewhead .prog { font-size: 15px; }
+.card .tap { font-size: 14px; }
+.reveal { width: 100%; }
+.speakrow { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; }
+.speak { justify-content: center; }
+.feedback { font-size: 19px; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.feedback .mark { font-size: 44px; line-height: 1; font-family: var(--f-en); }
+.confirm { background: var(--shu-soft); border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+.confirm p { margin: 0; font-weight: 700; }
+.banner { background: var(--ai-soft); color: var(--ink); border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; font-size: 15px; }
+.banner b { color: var(--ai); }
+.banner .row .btn { flex: 1; }
+.help { display: flex; flex-direction: column; gap: 16px; }
+.help section { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 18px; display: flex; flex-direction: column; gap: 10px; }
+.help h2 { color: var(--ai); font-size: 18px; font-weight: 700; letter-spacing: 0; }
+.help ol { margin: 0; padding-left: 1.4em; display: flex; flex-direction: column; gap: 10px; }
+.help .demo { display: inline-flex; vertical-align: middle; pointer-events: none; min-height: 0; padding: 4px 10px; font-size: 14px; border-radius: 8px; }
+.help .demo.speak { border-radius: 999px; }
+.help .demo svg { width: 14px; height: 14px; }
+.guide-step { display: flex; gap: 12px; align-items: flex-start; }
+.guide-step .num { flex: none; width: 34px; height: 34px; border-radius: 50%; background: var(--ai); color: var(--surface); display: grid; place-items: center; font-family: var(--f-en); font-weight: 700; }
+details.more { border-top: 1px solid var(--line); padding-top: 14px; }
+details.more summary { cursor: pointer; font-weight: 700; color: var(--ai); min-height: 44px; display: flex; align-items: center; }
+details.more > div { display: flex; flex-direction: column; gap: 18px; margin-top: 10px; }
+.toggle { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.toggle label { margin: 0; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 </head><body>
@@ -229,13 +284,15 @@ UNITS.forEach(u => {
     : Object.assign(it, { id: u.id + ':' + i }));
 });
 const ALL = UNITS.flatMap(u => u.items.map(it => Object.assign(it, { unit: u })));
-const LEARNED_BOX = 2;
+const LEARNED_BOX = 1;   // "覚えた!" once (or one right quiz answer) counts; a wrong answer resets it.
 
 // ---------- Saved progress (this browser only) ----------
 const KEY = 'english-benkyou-v1';
-const fresh = () => ({ cards: {}, streak: { count: 0, day: null }, settings: { rate: 0.8, voice: '' } });
+const fresh = () => ({ cards: {}, streak: { count: 0, day: null }, settings: { rate: 0.8, voice: '', size: 'l', auto: true }, seenGuide: false, hideInstall: false });
 let S = fresh();
 try { const raw = localStorage.getItem(KEY); if (raw) S = Object.assign(fresh(), JSON.parse(raw)); } catch (e) {}
+// People who already studied before this guide existed don't need it forced on them.
+if (!S.seenGuide && Object.keys(S.cards).length) S.seenGuide = true;
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
 const box = id => (S.cards[id] && S.cards[id].box) || 0;
 const setBox = (id, b) => { S.cards[id] = { box: Math.max(0, Math.min(3, b)), t: Date.now() }; touchStreak(); save(); };
@@ -279,7 +336,40 @@ let view = { name: 'home' };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const SPEAKER = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
 const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
-function go(v) { view = v; render(); window.scrollTo(0, 0); }
+
+// Environment checks used for beginner help (sound, home-screen install, in-app browsers).
+const UA = navigator.userAgent;
+const isIOS = /iPhone|iPad|iPod/.test(UA) || (/Macintosh/.test(UA) && navigator.maxTouchPoints > 1);
+const inAppBrowser = /\bLine\/|FBAN|FBAV|Instagram|; wv\)/i.test(UA);
+const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+let installPrompt = null;
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installPrompt = e; if (view.name === 'home' || view.name === 'help') render(); });
+window.addEventListener('appinstalled', () => { installPrompt = null; S.hideInstall = true; save(); if (view.name === 'home') render(); });
+
+function applySize() { document.documentElement.dataset.size = S.settings.size || 'l'; }
+applySize();
+
+// The phone's own Back button returns to Home instead of closing the app:
+// leaving Home pushes one history entry; any Back press lands on popstate.
+function go(v) {
+  const wasHome = view.name === 'home';
+  view = v;
+  if (v.name !== 'home' && wasHome) history.pushState({ eb: 1 }, '');
+  render(); window.scrollTo(0, 0);
+}
+function goHome() {
+  if (synth) synth.cancel();
+  if (history.state && history.state.eb) history.back();   // popstate renders Home
+  else { view = { name: 'home' }; render(); window.scrollTo(0, 0); }
+}
+const quizInProgress = () => view.name === 'quiz' && (view.i > 0 || view.answered) && !view.confirmQuit;
+window.addEventListener('popstate', () => {
+  if (quizInProgress()) {                       // Back in the middle of a quiz: ask first
+    history.pushState({ eb: 1 }, ''); view.confirmQuit = true; render(); return;
+  }
+  if (synth) synth.cancel();
+  view = { name: 'home' }; render(); window.scrollTo(0, 0);
+});
 
 function render() {
   if (view.name === 'home') return renderHome();
@@ -287,39 +377,58 @@ function render() {
   if (view.name === 'quiz') return renderQuiz();
   if (view.name === 'result') return renderResult();
   if (view.name === 'settings') return renderSettings();
+  if (view.name === 'help') return renderHelp();
 }
 
+const GEAR = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>';
 function topbar() {
   return `<header class="top"><div class="brand"><b>English Benkyou</b><span>えいごの勉強</span></div>
-    <button class="iconbtn" data-act="settings">せってい</button></header>`;
+    <button class="iconbtn" data-act="settings">${GEAR}せってい</button></header>`;
+}
+const backBtn = (label = '← ホームへ') => `<button class="back" data-act="home">${label}</button>`;
+
+function envBanner() {
+  if (inAppBrowser) return `<div class="banner" role="note"><b>LINE などのアプリの中で開いています</b>
+    <span>このままだと音が出ない・きろくが消えることがあります。画面の「…」や「︙」から<b>「ブラウザで開く」</b>をえらんでください。</span></div>`;
+  if (!synth) return '<p class="note">このブラウザは英語の読み上げができません。Chrome か Safari で開くと発音が聞けます。</p>';
+  if (isStandalone() || S.hideInstall || !S.seenGuide) return '';
+  if (installPrompt) return `<div class="banner"><b>ホーム画面にアイコンを置きませんか?</b><span>つぎから、アイコンをタップするだけで始められます。</span>
+    <div class="row"><button class="btn" data-act="install">アイコンを置く</button><button class="btn ghost" data-act="hide-install">あとで</button></div></div>`;
+  if (isIOS) return `<div class="banner"><b>ホーム画面にアイコンを置けます</b><span>つぎから、アイコンをタップするだけで始められます。</span>
+    <div class="row"><button class="btn" data-act="help">やり方を見る</button><button class="btn ghost" data-act="hide-install">あとで</button></div></div>`;
+  return '';
 }
 
 function renderHome() {
   const learned = ALL.filter(it => box(it.id) >= LEARNED_BOX).length;
   const next = UNITS.find(u => learnedIn(u) < u.items.length) || UNITS[0];
   $app.innerHTML = topbar() + `
+    ${envBanner()}
+    <section class="hero">
+      <h1>${S.seenGuide ? 'きょうも少しずつ、がんばろう!' : 'ようこそ!英語を、ゼロから。'}</h1>
+      ${S.seenGuide ? '' : '<p class="hint">はじめての方は、まず「つかいかた」を見てください。1分で読めます。</p>'}
+      <button class="btn big start" data-act="${S.seenGuide ? 'cards' : 'help'}" data-unit="${next.id}">
+        ${S.seenGuide ? `▶ はじめる<small>つぎのレッスン:${esc(next.ja)}</small>` : '▶ つかいかたを見る<small>はじめての方はこちら</small>'}</button>
+      ${S.seenGuide ? '<button class="linkbtn" data-act="help" style="align-self:center">？ つかいかた・こまったとき</button>' : ''}
+    </section>
     <section class="stats" aria-label="きろく">
-      <div class="stat streak"><div class="n">${streakNow()}</div><div class="l">日れんぞく</div></div>
-      <div class="stat learned"><div class="n">${learned}</div><div class="l">覚えたことば</div></div>
-      <div class="stat"><div class="n">${ALL.length}</div><div class="l">ぜんぶのことば</div></div>
+      <div class="stat streak"><div class="n">${streakNow()}<small style="font-size:14px"> 日</small></div><div class="l">れんぞく</div></div>
+      <div class="stat learned"><div class="n">${learned}</div><div class="l">覚えた</div></div>
+      <div class="stat"><div class="n">${ALL.length}</div><div class="l">ぜんぶ</div></div>
     </section>
     <section style="display:flex;flex-direction:column;gap:10px">
-      <h1>きょうも少しずつ、がんばろう!</h1>
-      <p class="hint">カードで覚えて、クイズでたしかめよう。🔊 で英語の発音が聞けます。</p>
-      <div class="row"><button class="btn big" data-act="cards" data-unit="${next.id}">つづきから:${esc(next.ja)}</button></div>
-    </section>
-    ${synth ? '' : '<p class="note">このブラウザは音声読み上げに対応していません。Chrome か Safari で開くと発音が聞けます。</p>'}
-    <section style="display:flex;flex-direction:column;gap:10px">
-      <h2>レッスン</h2>
+      <h2>レッスンをえらぶ</h2>
+      <p class="legend"><span><b>おぼえる</b> … カードで単語を覚えます</span><span><b>クイズ</b> … 覚えたかどうか、たしかめます</span></p>
       <div class="units">${UNITS.map(u => {
         const n = learnedIn(u), t = u.items.length;
         return `<div class="unit">
           <div><div class="name">${esc(u.ja)}</div><div class="sub">${esc(u.en)}</div></div>
-          <div class="acts"><button class="btn ghost" data-act="cards" data-unit="${u.id}">カード</button><button class="btn" data-act="quiz" data-unit="${u.id}">クイズ</button></div>
+          <div class="acts"><button class="btn ghost" data-act="cards" data-unit="${u.id}" aria-label="${esc(u.ja)}をおぼえる">おぼえる</button><button class="btn" data-act="quiz" data-unit="${u.id}" aria-label="${esc(u.ja)}のクイズ">クイズ</button></div>
           <div class="bar" aria-hidden="true"><i style="width:${Math.round(n / t * 100)}%"></i></div>
-          <div class="count">${n} / ${t} 覚えた</div></div>`;
+          <div class="count">${n} / ${t} 覚えた${n === t ? ' ✓' : ''}</div></div>`;
       }).join('')}</div>
-    </section>`;
+    </section>
+    <p class="hint" style="text-align:center">きろくは自動で保存されます。</p>`;
 }
 
 // ---------- Flashcards ----------
@@ -331,9 +440,9 @@ function startCards(unitId) {
 }
 function renderCard() {
   const v = view, it = v.queue[0];
-  if (!it) { $app.innerHTML = topbar() + `<div class="result"><div class="score">✓</div><h1>${esc(v.unit.ja)}のカード、おわり!</h1>
+  if (!it) { $app.innerHTML = `<div class="viewhead">${backBtn()}</div><div class="result"><div class="score">✓</div><h1>${esc(v.unit.ja)}のカード、おわり!</h1>
       <p class="hint">${learnedIn(v.unit)} / ${v.unit.items.length} 覚えました。つぎはクイズでたしかめよう。</p>
-      <div class="row" style="width:100%"><button class="btn big ghost" data-act="home">ホームへ</button><button class="btn big" data-act="quiz" data-unit="${v.unit.id}">クイズ</button></div></div>`; return; }
+      <div class="row" style="width:100%"><button class="btn big ghost" data-act="home">ホームへ</button><button class="btn big" data-act="quiz" data-unit="${v.unit.id}">クイズへ</button></div></div>`; return; }
   const front = `
       ${it.visual && v.unit.kind !== 'letter' ? `<div class="visual">${esc(it.visual)}</div>` : ''}
       ${it.swatch ? `<div class="swatch" style="background:${it.swatch}"></div>` : ''}
@@ -341,22 +450,25 @@ function renderCard() {
   const back = `<div class="meaning">${esc(it.ja)}</div>
       ${it.ex ? `<div class="ex"><span class="en">${esc(it.ex)}</span>${esc(it.exJa || '')}</div>` : ''}`;
   $app.innerHTML = `
-    <div class="viewhead"><button class="back" data-act="home">← もどる</button><strong>${esc(v.unit.ja)}</strong><span class="prog">${v.done} / ${v.total}</span></div>
-    <button class="card" data-act="flip" aria-label="カードをめくる">${front}${v.flipped ? back : '<div class="tap">タップして意味を見る</div>'}</button>
-    <div class="row" style="justify-content:center">
+    <div class="viewhead">${backBtn()}<strong>${esc(v.unit.ja)}</strong><span class="prog">${v.done + 1} / ${v.total} まい</span></div>
+    <button class="card" data-act="flip" aria-label="${v.flipped ? 'カード' : 'こたえを見る'}">${front}${v.flipped ? back : '<div class="tap">意味を思い出してみよう</div>'}</button>
+    <div class="speakrow">
       <button class="speak" data-act="say">${SPEAKER}<span>きく</span></button>
       <button class="speak" data-act="say-slow">${SPEAKER}<span>ゆっくり</span></button>
       ${it.ex || it.sayLong ? `<button class="speak" data-act="say-ex">${SPEAKER}<span>例文</span></button>` : ''}
     </div>
-    ${v.flipped ? `<div class="row"><button class="btn big again" data-act="again">まだ</button><button class="btn big know" data-act="know">覚えた!</button></div>`
-                : `<p class="hint" style="text-align:center">意味を思い出してから、カードをタップ</p>`}`;
-  if (!v.spoken) { v.spoken = true; speak(sayOf(it)); }
+    ${v.flipped
+      ? `<div class="row"><button class="btn big again" data-act="again">もう一回</button><button class="btn big know" data-act="know">覚えた!</button></div>
+         <p class="hint" style="text-align:center">自信がなければ「もう一回」。少しあとで、また出てきます。</p>`
+      : `<button class="btn big reveal" data-act="flip">こたえを見る</button>`}
+    <button class="linkbtn" data-act="help" style="align-self:center">音が出ないときは</button>`;
+  if (!v.spoken && S.settings.auto !== false) { v.spoken = true; speak(sayOf(it)); }
 }
 function cardAnswer(known) {
   const v = view, it = v.queue.shift();
   if (known) { setBox(it.id, box(it.id) + 1); v.done++; }
   else { setBox(it.id, 0); v.queue.splice(Math.min(3, v.queue.length), 0, it); }
-  v.flipped = false; v.spoken = false; render();
+  v.flipped = false; v.spoken = false; render(); window.scrollTo(0, 0);
 }
 
 // ---------- Quiz ----------
@@ -373,7 +485,7 @@ function startQuiz(unitId) {
 }
 function renderQuiz() {
   const v = view, q = v.qs[v.i], it = q.it, letter = v.unit.kind === 'letter';
-  const label = { en2ja: '意味はどれ?', ja2en: '英語でなんと言う?', listen: '聞いて、えらんでね' }[q.kind];
+  const label = { en2ja: 'この英語の意味は、どれ?', ja2en: '英語で、なんと言う?', listen: '音を聞いて、えらんでね' }[q.kind];
   const prompt = q.kind === 'en2ja' ? `<div class="prompt en">${esc(letter ? it.visual : it.en)}</div>`
     : q.kind === 'ja2en' ? `<div class="prompt">${esc(it.ja)}</div>`
     : `<button class="speak" data-act="say" style="font-size:18px;padding:12px 22px">${SPEAKER}<span>もう一度きく</span></button>`;
@@ -381,15 +493,19 @@ function renderQuiz() {
   const long = q.opts.some(o => (showEn ? o.en : o.ja).length > 12);
   const a = v.answered;
   $app.innerHTML = `
-    <div class="viewhead"><button class="back" data-act="home">← やめる</button><strong>${esc(v.unit.ja)} クイズ</strong><span class="prog">${v.i + 1} / ${v.qs.length}</span></div>
+    <div class="viewhead"><button class="back" data-act="quit">← やめる</button><strong>${esc(v.unit.ja)} クイズ</strong><span class="prog">${v.i + 1} / ${v.qs.length} もん</span></div>
+    ${v.confirmQuit ? `<div class="confirm" role="alertdialog" aria-label="クイズをやめますか"><p>クイズをやめて、ホームにもどりますか?</p>
+      <div class="row"><button class="btn big ghost" data-act="quit-no">つづける</button><button class="btn big again" data-act="quit-yes">やめる</button></div></div>` : ''}
     <div class="q"><div class="kind">${label}</div>${prompt}</div>
     <div class="opts${long ? ' long' : ''}">${q.opts.map((o, k) => {
       let cls = 'opt' + (showEn ? ' en' : '');
       if (a) { if (o === it) cls += ' right'; else if (k === a.pick) cls += ' wrong'; }
       return `<button class="${cls}" data-act="pick" data-k="${k}" ${a ? 'disabled' : ''}>${esc(showEn ? (letter ? o.visual : o.en) : o.ja)}</button>`;
     }).join('')}</div>
-    <div class="feedback ${a ? (a.ok ? 'ok' : 'ng') : ''}">${a ? (a.ok ? 'せいかい!' : `ざんねん… こたえは「${esc(letter ? it.en : it.en)} = ${esc(it.ja)}」`) : ''}</div>
-    ${a ? `<div class="row"><button class="btn big" data-act="next">${v.i + 1 < v.qs.length ? 'つぎへ' : 'けっかを見る'}</button></div>` : ''}`;
+    <div class="feedback ${a ? (a.ok ? 'ok' : 'ng') : ''}" aria-live="polite">${a ? (a.ok
+      ? '<span class="mark">○</span>せいかい!'
+      : `<span class="mark">✕</span>ざんねん… こたえは「${esc(it.en)} = ${esc(it.ja)}」`) : ''}</div>
+    ${a ? `<div class="row"><button class="btn big" data-act="next">${v.i + 1 < v.qs.length ? 'つぎの問題へ →' : 'けっかを見る →'}</button></div>` : ''}`;
   if (q.kind === 'listen' && !a && !v.spoken) { v.spoken = true; speak(sayOf(it)); }
 }
 function pick(k) {
@@ -397,23 +513,68 @@ function pick(k) {
   const ok = q.opts[k] === q.it;
   v.answered = { pick: k, ok };
   if (ok) { v.right++; setBox(q.it.id, box(q.it.id) + 1); } else { v.misses.push(q.it); setBox(q.it.id, 0); }
+  if (navigator.vibrate && !ok) { try { navigator.vibrate(80); } catch (e) {} }
   speak(sayOf(q.it)); render();
+  const nb = document.querySelector('[data-act="next"]'); if (nb && nb.scrollIntoView) nb.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
 }
 function nextQ() {
   const v = view; v.answered = null; v.spoken = false;
-  if (++v.i >= v.qs.length) go({ name: 'result', unit: v.unit, right: v.right, total: v.qs.length, misses: v.misses });
+  if (++v.i >= v.qs.length) { view = { name: 'result', unit: v.unit, right: v.right, total: v.qs.length, misses: v.misses }; render(); }
   else render();
+  window.scrollTo(0, 0);
 }
 function renderResult() {
   const v = view, pct = v.right / v.total;
   const msg = pct === 1 ? 'パーフェクト!すごい!' : pct >= 0.7 ? 'よくできました!' : 'だいじょうぶ、くりかえせば覚えられるよ。';
-  $app.innerHTML = topbar() + `<div class="result">
+  $app.innerHTML = `<div class="viewhead">${backBtn()}</div><div class="result">
     <div class="hint">${esc(v.unit.ja)} クイズ</div>
     <div class="score">${v.right}<span style="font-size:24px;color:var(--muted)"> / ${v.total}</span></div>
     <h1>${msg}</h1>
     ${v.misses.length ? `<div class="misses"><h2>まちがえたことば</h2>${v.misses.map(m => `<div><span class="en">${esc(m.en)}</span><span>${esc(m.ja)}</span></div>`).join('')}</div>` : ''}
     <div class="row" style="width:100%"><button class="btn big ghost" data-act="cards" data-unit="${v.unit.id}">カードで復習</button><button class="btn big" data-act="quiz" data-unit="${v.unit.id}">もう一度</button></div>
-    <button class="back" style="border:0;background:none;color:var(--ai)" data-act="home">ホームへ</button></div>`;
+    <button class="btn big ghost" style="width:100%" data-act="home">ホームへもどる</button></div>`;
+}
+
+// ---------- Help / first-time guide ----------
+function renderHelp() {
+  const first = !S.seenGuide;
+  const demo = (cls, txt) => `<span class="btn ${cls} demo">${txt}</span>`;
+  const installHow = isStandalone() ? '<p class="hint">もうホーム画面から使っています。このままでOKです!</p>'
+    : installPrompt ? `<p>下のボタンを押して「インストール」をえらぶだけです。</p><button class="btn big" data-act="install">ホーム画面にアイコンを置く</button>`
+    : isIOS ? `<ol><li>画面の下(iPadは上)にある <b>共有ボタン</b>(四角から↑が出ているマーク)をタップ</li>
+        <li>下にスクロールして <b>「ホーム画面に追加」</b> をタップ</li><li>右上の <b>「追加」</b> をタップ</li></ol>
+        <p class="hint">Safari で開いているときだけできます。</p>`
+    : `<ol><li>画面の右上の <b>︙</b>(点が3つ)をタップ</li><li><b>「ホーム画面に追加」</b> または <b>「アプリをインストール」</b> をタップ</li></ol>`;
+  $app.innerHTML = `
+    <div class="viewhead">${first ? '' : backBtn()}<strong>つかいかた</strong></div>
+    <div class="help">
+      <section><h2>3ステップで勉強します</h2>
+        <div class="guide-step"><span class="num">1</span><div>ホームの ${demo('', '▶ はじめる')} か、レッスンの ${demo('ghost', 'おぼえる')} を押します。</div></div>
+        <div class="guide-step"><span class="num">2</span><div>英語のカードが出ます。意味を思い出してから ${demo('', 'こたえを見る')} を押します。
+          覚えていたら ${demo('know', '覚えた!')}、自信がなければ ${demo('again', 'もう一回')}。</div></div>
+        <div class="guide-step"><span class="num">3</span><div>少し覚えたら ${demo('', 'クイズ')} で、たしかめます。4つの中から正しいものを押すだけです。</div></div>
+        <p class="hint">きろくは自動で保存されます。毎日5分でも続けると、日数がふえていきます。</p>
+      </section>
+      <section><h2>🔊 音が出ないときは</h2>
+        <ol><li>スマホの <b>音量ボタン</b>で、音を大きくしてください。</li>
+          ${isIOS ? '<li>iPhone の横にある <b>マナーモードのスイッチ</b>(着信/消音)をオフにしてください。</li>' : '<li><b>マナーモード</b>になっていないか、たしかめてください。</li>'}
+          <li>LINE の中で開いているときは、<b>「ブラウザで開く」</b>をえらんでください。</li></ol>
+        <button class="speak" data-act="test" style="align-self:flex-start">${SPEAKER}<span>ためしに音を出す</span></button>
+      </section>
+      <section><h2>📱 ホーム画面にアイコンを置く</h2>
+        <p class="hint">アイコンをタップするだけで、すぐに始められます。ネットがなくても使えます。</p>
+        ${installHow}
+      </section>
+      <section><h2>🔠 文字が小さいときは</h2>
+        <p>右上の ${demo('ghost', 'せってい')} で、文字の大きさを変えられます。</p>
+        <div class="seg">${sizeButtons()}</div>
+      </section>
+      <button class="btn big" data-act="${first ? 'guide-done' : 'home'}">${first ? 'わかった!はじめる' : 'ホームへもどる'}</button>
+    </div>`;
+}
+function sizeButtons() {
+  return [['m', 'ふつう'], ['l', '大きい'], ['xl', 'とても大きい']]
+    .map(([k, l]) => `<button data-act="size" data-s="${k}" aria-pressed="${(S.settings.size || 'l') === k}">${l}</button>`).join('');
 }
 
 // ---------- Settings ----------
@@ -421,18 +582,25 @@ function renderSettings() {
   const rates = [[0.6, 'とてもゆっくり'], [0.8, 'ゆっくり'], [1, 'ふつう']];
   const cur = pickVoice();
   $app.innerHTML = `
-    <div class="viewhead"><button class="back" data-act="home">← もどる</button><strong>せってい</strong></div>
+    <div class="viewhead">${backBtn()}<strong>せってい</strong></div>
     <div class="settings">
+      <div><label>文字の大きさ</label><div class="seg">${sizeButtons()}</div></div>
       <div><label>読み上げの速さ</label><div class="seg">${rates.map(([r, l]) => `<button data-act="rate" data-r="${r}" aria-pressed="${S.settings.rate === r}">${l}</button>`).join('')}</div></div>
-      <div><label for="voice">声</label>${voices.length ? `<select id="voice">${voices.map(v => `<option value="${esc(v.voiceURI)}" ${cur && cur.voiceURI === v.voiceURI ? 'selected' : ''}>${esc(v.name)} (${esc(v.lang)})</option>`).join('')}</select>` : '<p class="hint">英語の声が見つかりません。</p>'}</div>
+      <div><label>カードを出したとき、自動で読み上げる</label><div class="seg">
+        <button data-act="auto" data-on="1" aria-pressed="${S.settings.auto !== false}">する</button>
+        <button data-act="auto" data-on="0" aria-pressed="${S.settings.auto === false}">しない</button></div></div>
       <div class="row"><button class="speak" data-act="test">${SPEAKER}<span>ためしに聞く</span></button></div>
-      <div><label>きろくをリセット</label>
-        ${view.confirmReset ? `<p class="hint">覚えたことばと連続日数がぜんぶ消えます。いいですか?</p><div class="row"><button class="danger" data-act="reset-yes">消す</button><button class="btn ghost" data-act="reset-no">やめる</button></div>`
-          : `<button class="danger" data-act="reset">リセットする</button>`}</div>
-      <p class="hint">きろくはこの端末のブラウザにだけ保存されます。</p>
+      <details class="more"><summary>くわしい設定</summary><div>
+        <div><label for="voice">声のしゅるい</label>${voices.length ? `<select id="voice">${voices.map(v => `<option value="${esc(v.voiceURI)}" ${cur && cur.voiceURI === v.voiceURI ? 'selected' : ''}>${esc(v.name)} (${esc(v.lang)})</option>`).join('')}</select>` : '<p class="hint">英語の声が見つかりません。</p>'}</div>
+        <div><label>きろくを消す</label>
+          ${view.confirmReset ? `<p class="hint">覚えたことばと連続日数がぜんぶ消えます。元にはもどせません。いいですか?</p><div class="row"><button class="danger" data-act="reset-yes">消す</button><button class="btn ghost" data-act="reset-no">やめる</button></div>`
+            : `<button class="danger" data-act="reset">きろくを消す</button>`}</div>
+      </div></details>
+      <p class="hint">きろくはこのスマホ(パソコン)のブラウザに、自動で保存されます。</p>
     </div>`;
   const sel = document.getElementById('voice');
   if (sel) sel.onchange = () => { S.settings.voice = sel.value; save(); speak('Hello! Nice to meet you.'); };
+  if (view.confirmReset) { const d = $app.querySelector('details.more'); if (d) d.open = true; }
 }
 
 // ---------- Events ----------
@@ -440,8 +608,10 @@ $app.addEventListener('click', e => {
   const b = e.target.closest('[data-act]'); if (!b) return;
   const act = b.dataset.act, v = view;
   switch (act) {
-    case 'home': if (synth) synth.cancel(); go({ name: 'home' }); break;
+    case 'home': goHome(); break;
     case 'settings': go({ name: 'settings' }); break;
+    case 'help': go({ name: 'help' }); break;
+    case 'guide-done': S.seenGuide = true; save(); goHome(); break;
     case 'cards': startCards(b.dataset.unit); break;
     case 'quiz': startQuiz(b.dataset.unit); break;
     case 'flip': v.flipped = !v.flipped; render(); break;
@@ -452,11 +622,18 @@ $app.addEventListener('click', e => {
     case 'know': cardAnswer(true); break;
     case 'pick': pick(+b.dataset.k); break;
     case 'next': nextQ(); break;
+    case 'quit': if (quizInProgress()) { v.confirmQuit = true; render(); window.scrollTo(0, 0); } else goHome(); break;
+    case 'quit-no': v.confirmQuit = false; render(); break;
+    case 'quit-yes': goHome(); break;
+    case 'size': S.settings.size = b.dataset.s; save(); applySize(); render(); break;
+    case 'auto': S.settings.auto = b.dataset.on === '1'; save(); render(); break;
     case 'rate': S.settings.rate = +b.dataset.r; save(); render(); speak('This is the speed.'); break;
     case 'test': speak('Hello! Nice to meet you.'); break;
+    case 'install': if (installPrompt) { const p = installPrompt; installPrompt = null; p.prompt(); p.userChoice.finally(render); } break;
+    case 'hide-install': S.hideInstall = true; save(); render(); break;
     case 'reset': v.confirmReset = true; render(); break;
     case 'reset-no': v.confirmReset = false; render(); break;
-    case 'reset-yes': S = fresh(); save(); go({ name: 'home' }); break;
+    case 'reset-yes': { const keep = { size: S.settings.size }; S = fresh(); S.seenGuide = true; Object.assign(S.settings, keep); save(); goHome(); break; }
   }
 });
 
